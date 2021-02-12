@@ -62,16 +62,24 @@ DTmerged[,list(mean = mean(churn_prob)), by = Gender]
 DTmerged[CustomerId %in% 15815690, churn_prob]
 DTmerged[DTmerged$CustomerId == 15815690, ]$churn_prob
 
-Customer_Churn_predict <- function (dataset, CustomerID) {
-  churn_prob <- glm(Exited~CreditScore + Gender + Age + Tenure + Balance +
-                      NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary,
-                    data = dataset, family = "binomial")
-  dataset[, 'churn_prob'] <- predict(churn_prob, dataset, type="response")
-  # reading specific customers churn probability
-  customer_churn_prob <- dataset[dataset$CustomerId == CustomerID, ]$churn_prob
-  return(customer_churn_prob)
+print(length(DTmerged[CustomerId %in% 15815690, churn_prob]))
+
+# functtion
+Customer_Churn_predict <- function (dataset, CustomerID=1) {
+  
+  # customer available
+  if (length(dataset[CustomerId %in% CustomerID, churn_prob])>=1){
+    print('Customer exists')
+    churn_prob <- glm(Exited~CreditScore + Gender + Age + Tenure + Balance +
+                        NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary,
+                      data = dataset, family = "binomial")
+    dataset[, 'churn_prob'] <- predict(churn_prob, dataset, type="response")
+    # reading specific customers churn probability
+    customer_churn_prob <- dataset[dataset$CustomerId == CustomerID, ]$churn_prob
+  }
+  else {'Customer does not exists'}
 }
 
 # function test: 
-Customer_Churn_predict(DTmerged,15815690)
+Customer_Churn_predict(DTmerged,15815691)
 
