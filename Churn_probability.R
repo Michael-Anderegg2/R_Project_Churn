@@ -58,3 +58,20 @@ DTmerged[,list(mean = mean(churn_prob)), by = Gender]
 
 
 #####__________4. Create a package for churn prediction_________________#####
+
+DTmerged[CustomerId %in% 15815690, churn_prob]
+DTmerged[DTmerged$CustomerId == 15815690, ]$churn_prob
+
+Customer_Churn_predict <- function (dataset, CustomerID) {
+  churn_prob <- glm(Exited~CreditScore + Gender + Age + Tenure + Balance +
+                      NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary,
+                    data = dataset, family = "binomial")
+  dataset[, 'churn_prob'] <- predict(churn_prob, dataset, type="response")
+  # reading specific customers churn probability
+  customer_churn_prob <- dataset[dataset$CustomerId == CustomerID, ]$churn_prob
+  return(customer_churn_prob)
+}
+
+# function test: 
+Customer_Churn_predict(DTmerged,15815690)
+
